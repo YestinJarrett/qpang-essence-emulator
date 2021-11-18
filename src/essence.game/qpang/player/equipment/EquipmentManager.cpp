@@ -1,5 +1,6 @@
 #include "EquipmentManager.h"
 
+#include "CharacterManager.h"
 #include "core/Emulator.h"
 #include "core/database/Database.h"
 
@@ -17,15 +18,6 @@
 void EquipmentManager::initialize(std::shared_ptr<Player> player, uint16_t playerId)
 {
 	m_player = player;
-
-	m_unlockedCharacters = {
-		333,
-		343,
-		578,
-		579,
-		850,
-		851
-	};
 
 	Statement::Ptr stmt = DATABASE->prepare("SELECT * FROM player_equipment WHERE player_id = ?");
 	stmt->bindInteger(playerId);
@@ -60,9 +52,7 @@ void EquipmentManager::initialize(std::shared_ptr<Player> player, uint16_t playe
 
 std::vector<uint16_t> EquipmentManager::getUnlockedCharacters()
 {
-	return {
-		m_unlockedCharacters
-	};
+	return CharacterManager::getUnlockedCharacterIds();
 }
 
 std::array<uint64_t, 13> EquipmentManager::getEquipmentByCharacter(uint16_t characterId)
@@ -200,23 +190,31 @@ void EquipmentManager::removeSkillCard(uint64_t cardId)
 	), m_skillCardIds.end());
 }
 
-void EquipmentManager::unequipItem(uint64_t cardId)
+void EquipmentManager::unequipItem(const uint64_t cardId)
 {
 	std::lock_guard l(m_mx);
 
-	for (size_t i = 0; i < m_unlockedCharacters.size(); i++)
+	const auto unlockedCharacterIds = CharacterManager::getUnlockedCharacterIds();
+
+	for (size_t i = 0; i < unlockedCharacterIds.size(); i++)
 	{
-		auto character = m_unlockedCharacters[i];
+		auto character = unlockedCharacterIds[i];
 		auto it = m_equips.find(character);
 
 		if (it == m_equips.cend())
+		{
 			continue;
+		}
 
 		auto& equips = it->second;
 
-		for (size_t y = 0; y < 13; y++)
-			if (equips[y] == cardId)
-				equips[y] = 0;
+		for (size_t j = 0; j < 13; j++)
+		{
+			if (equips[j] == cardId)
+			{
+				equips[j] = 0;
+			}
+		}
 	}
 }
 
@@ -317,26 +315,30 @@ uint16_t EquipmentManager::characterIndexToId(const uint16_t characterIndex)
 	{
 	default:
 	case 0:
-		return 333;
+		return Character::CharacterId::KEN;
 	case 1:
-		return 343;
+		return Character::CharacterId::HANA;
 	case 2:
-		return 578;
+		return Character::CharacterId::KUMA;
 	case 3:
-		return 579;
+		return Character::CharacterId::MIUMIU;
 	case 4:
-		return 850;
+		return Character::CharacterId::SAI;
 	case 5:
-		return 851;
+		return Character::CharacterId::DR_URU;
 	}
 }
 
 bool EquipmentManager::hasEquipped(const uint64_t cardId)
 {
-	for (const auto& character : m_unlockedCharacters)
-		if (hasEquipped(cardId, character))
+	for (const auto& characterId : CharacterManager::getUnlockedCharacterIds())
+	{
+		if (hasEquipped(cardId, characterId))
+		{
 			return true;
-
+		}
+	}
+		
 	return false;
 }
 
@@ -388,27 +390,13 @@ bool EquipmentManager::hasMeleeWeapon()
 	return false;
 }
 
-uint16_t EquipmentManager::getBaseHealth()
+uint16_t EquipmentManager::getBaseHealth() const
 {
-	if (auto player = m_player.lock(); player != nullptr)
+	if (const auto player = m_player.lock(); player != nullptr)
 	{
-		switch (player->getCharacter())
-		{
-		case 850: // sai
-			return 130;
-		case 851: // uru
-			return 140;
-		case 578: // kuma
-			return 200;
-		case 579: // miu miu
-			return 80;
-		case 343: // hana
-			return 100;
-		case 333: // ken
-			return 110;
-		default:
-			return 100;
-		}
+		const auto character = CharacterManager::getCharacterById(player->getCharacter());
+
+		return character.getBaseHealth();
 	}
 
 	return 0;
@@ -543,7 +531,9 @@ void EquipmentManager::save()
 {
 	if (const auto player = m_player.lock(); player != nullptr)
 	{
-		for (const auto& character : m_unlockedCharacters)
+		const auto unlockedCharacterIds = CharacterManager::getUnlockedCharacterIds();
+
+		for (const auto& character : unlockedCharacterIds)
 		{
 			const auto it = m_equips.find(character);
 

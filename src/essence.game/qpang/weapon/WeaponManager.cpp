@@ -2,6 +2,9 @@
 
 #include <iostream>
 
+#include "CharacterManager.h"
+#include "Emulator.h"
+
 void WeaponManager::initialize()
 {
 	const auto statement = DATABASE->prepare("SELECT * FROM weapons");
@@ -45,15 +48,14 @@ void WeaponManager::initialize()
 bool WeaponManager::canEquip(const uint32_t weaponId, const uint16_t characterId)
 {
 	const auto weapon = get(weaponId);
+	const auto character = CharacterManager::getCharacterById(characterId);
 
-	const auto it = m_characterPower.find(characterId);
-
-	if (it == m_characterPower.cend())
+	if (character.getId() == 0)
 	{
 		return false;
 	}
 
-	return weapon.weight <= it->second;
+	return weapon.weight <= character.getStrength();
 }
 
 Weapon WeaponManager::get(const uint32_t weaponId)
