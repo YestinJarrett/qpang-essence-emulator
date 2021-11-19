@@ -1,0 +1,10 @@
+#pragma once
+
+enum Trap {
+	TRAP_FLAME = 1,
+	TRAP_PRESS = 2,
+	TRAP_FALL = 3,
+	TRAP_DOWN = 4,
+	TRAP_POISON_GROUND = 6,
+	TRAP_SHIP_PROPELLER = 7
+};

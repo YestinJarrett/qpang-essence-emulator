@@ -8,6 +8,7 @@
 #include "RoomSession.h"
 #include "RoomSessionPlayer.h"
 
+#include "enums/Trap.h"
 #include "structs/CGHitInfo.h"
 
 void PlayerDamageManager::initialize(const std::shared_ptr<RoomSessionPlayer>& roomSessionPlayer)
@@ -47,15 +48,6 @@ void PlayerDamageManager::handleCGHit(const CGHitInfo& cgHitInfo) const
 #pragma endregion
 
 #pragma region Trap Related Methods
-
-enum Trap {
-	TRAP_FLAME = 1,
-	TRAP_PRESS = 2,
-	TRAP_FALL = 3,
-	TRAP_DOWN = 4,
-	TRAP_POISON_GROUND = 6,
-	TRAP_SHIP_PROPELLER = 7
-};
 
 bool PlayerDamageManager::isTrap(const uint32_t weaponId)
 {
