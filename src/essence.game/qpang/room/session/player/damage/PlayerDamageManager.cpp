@@ -8,6 +8,8 @@
 #include "RoomSession.h"
 #include "RoomSessionPlayer.h"
 
+#include "structs/CGHitInfo.h"
+
 void PlayerDamageManager::initialize(const std::shared_ptr<RoomSessionPlayer>& roomSessionPlayer)
 {
 	m_roomSessionPlayer = roomSessionPlayer;
@@ -38,7 +40,7 @@ void PlayerDamageManager::handleCGHit(const CGHitInfo& cgHitInfo) const
 		return;
 	}
 
-	// TODO: At this point, the damage comes from another player, so we will have to perform some
+	// TODO: At this point, the damage is not a trap and the target player exists, so we will have to perform some
 	// source and target player checks, see cg_hit.
 }
 
