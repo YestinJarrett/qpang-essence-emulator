@@ -112,6 +112,7 @@ void RoomSessionPlayer::initialize()
 		m_skillManager.initialize(shared_from_this());
 	}
 
+	m_damageManager.initialize(shared_from_this());
 	m_entityManager.initialize(shared_from_this());
 }
 
@@ -624,6 +625,11 @@ PlayerWeaponManager* RoomSessionPlayer::getWeaponManager()
 PlayerSkillManager* RoomSessionPlayer::getSkillManager()
 {
 	return &m_skillManager;
+}
+
+PlayerDamageManager* RoomSessionPlayer::getDamageManager()
+{
+	return &m_damageManager;
 }
 
 PlayerEntityManager* RoomSessionPlayer::getEntityManager()

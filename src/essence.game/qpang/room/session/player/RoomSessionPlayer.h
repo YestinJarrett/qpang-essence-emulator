@@ -5,12 +5,12 @@
 #include <cstdint>
 
 #include "qpang/Position.h"
-#include "qpang/room/session/bullet/Bullet.h"
 
 #include "qpang/room/session/player/effect/PlayerEffectManager.h"
 #include "qpang/room/session/player/weapon/PlayerWeaponManager.h"
 #include "qpang/room/session/player/skill/PlayerSkillManager.h"
 #include "qpang/room/session/player/entity/PlayerEntityManager.h"
+#include <qpang/room/session/player/damage/PlayerDamageManager.h>
 
 class GameNetEvent;
 class RoomSession;
@@ -124,6 +124,7 @@ public:
 	PlayerEffectManager* getEffectManager();
 	PlayerWeaponManager* getWeaponManager();
 	PlayerSkillManager* getSkillManager();
+	PlayerDamageManager* getDamageManager();
 	PlayerEntityManager* getEntityManager();
 
 	template<typename T, typename ...Args>
@@ -138,6 +139,7 @@ private:
 	PlayerEffectManager m_effectManager;
 	PlayerWeaponManager m_weaponManager;
 	PlayerSkillManager m_skillManager;
+	PlayerDamageManager m_damageManager;
 	PlayerEntityManager m_entityManager;
 
 	Position m_position;
