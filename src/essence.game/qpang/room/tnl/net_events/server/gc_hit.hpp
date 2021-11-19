@@ -7,7 +7,7 @@ class GCHit : public GameNetEvent
 {
 	typedef NetEvent Parent;
 public:
-
+	// TODO: Clean up this class.
 	GCHit() : GameNetEvent{ GC_HIT, NetEvent::GuaranteeType::GuaranteedOrdered, NetEvent::DirAny } {};
 
 	GCHit(
